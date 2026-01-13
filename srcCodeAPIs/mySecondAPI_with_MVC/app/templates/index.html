@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Hello World</title>
-  <style>
-    h1 {
-      font-size: 60px;    /* très grand */
-      text-align: center; /* centré */
-      color: #ff6600;     /* couleur sympa */
-      margin-top: 100px;  /* espace en haut */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
 </head>
 <body>
-
-  <h1>Hello World</h1>
-
+    <h1>{{ title }}</h1>
+    <p>Nom : {{ utilisateur.name }}</p>
+    <p>Prénom : {{ utilisateur.surname }}</p>
 </body>
 </html>
