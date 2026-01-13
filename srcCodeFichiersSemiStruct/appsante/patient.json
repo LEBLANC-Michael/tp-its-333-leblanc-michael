@@ -1,0 +1,49 @@
+{
+  "patients": [
+    {
+      "id": "P001",
+      "nom": "Laachiri",
+      "prenom": "Abdellah",
+      "age": 34,
+      "sexe": "M",
+      "parametres_sante": {
+        "taille": 1.68,
+        "poids": 63,
+        "tension": "12/8",
+        "frequence_cardiaque": 72,
+        "groupe_sanguin": "O+"
+      },
+      "antecedents": ["asthme", "allergie au pollen"]
+    },
+    {
+      "id": "P002",
+      "nom": "Autriche",
+      "prenom": "Enzo",
+      "age": 41,
+      "sexe": "M",
+      "parametres_sante": {
+        "taille": 1.75,
+        "poids": 82,
+        "tension": "13/9",
+        "frequence_cardiaque": 78,
+        "groupe_sanguin": "A-"
+      },
+      "antecedents": ["hypertension"]
+    },
+    {
+      "id": "P003",
+      "nom": "Diaz",
+      "prenom": "José",
+      "age": 27,
+      "sexe": "M",
+      "parametres_sante": {
+        "taille": 1.70,
+        "poids": 55,
+        "tension": "11/7",
+        "frequence_cardiaque": 70,
+        "groupe_sanguin": "B+"
+      },
+      "antecedents": []
+    }
+  ]
+}
