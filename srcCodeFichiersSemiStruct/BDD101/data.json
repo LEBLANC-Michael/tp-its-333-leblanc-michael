@@ -4,10 +4,11 @@
     "type": "Feature", 
     "geometry": { 
       "type": "Point", 
-      "coordinates": [42.0, 21.0] 
+      "coordinates": [4.0, 2.0] 
      }, 
     "properties": { 
-      "prop0": "value0" 
+      "prop0": "value0",
+      "prop1":"True"
     } 
    }] 
   }
