@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Étudiants</title>
+</head>
+<body>
+    <h1>Gestion des étudiants</h1>
+
+    <h2>Ajouter</h2>
+    <form action="/ajouter" method="post">
+        Nom: <input name="nom" required><br>
+        Adresse: <input name="adresse"><br>
+        Pincode: <input name="pincode"><br>
+        <button type="submit">Ajouter</button>
+    </form>
+
+    <h2>Modifier</h2>
+    {% for e in etudiants %}
+        <form action="/modifier/{{ e.id }}" method="post">
+            {{ e.nom }} :
+            Adresse <input name="adresse" value="{{ e.adresse }}">
+            Pincode <input name="pincode" value="{{ e.pincode }}">
+            <button type="submit">Modifier</button>
+        </form>
+    {% endfor %}
+
+    <h2>Liste</h2>
+    <ul>
+        {% for e in etudiants %}
+            <li>{{ e.id }} - {{ e.nom }} - {{ e.adresse }} - {{ e.pincode }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

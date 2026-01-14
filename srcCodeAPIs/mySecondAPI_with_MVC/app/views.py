@@ -24,4 +24,4 @@ def index():
     surname = request.args.get('surname', 'Doe') 
     user = {'name': name, 'surname': surname}
 
-    return render_template('index.html', title='MDM', utilisateur=user)
+    return render_template('index.html', title='Hello world', utilisateur=user)
