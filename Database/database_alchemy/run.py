@@ -1,4 +1,6 @@
-from app import app  # importe ton objet Flask
+from app import app
+from flasgger import Swagger
 
-if __name__ == "__main__":
-    app.run(debug=True)
+Swagger(app)
+
+app.run(host="0.0.0.0", port=5000, debug=True)

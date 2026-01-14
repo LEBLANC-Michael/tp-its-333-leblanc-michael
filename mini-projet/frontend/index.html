@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mini-Projet Microservices</title>
+<style>
+body{font-family:Arial;background:#f5f6fa;padding:30px}
+.card{background:white;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 0 10px #ccc}
+button{padding:6px 12px;margin-top:5px}
+input{padding:5px;margin:5px;width:200px}
+.success{color:green}
+.error{color:red}
+pre{background:#eee;padding:10px}
+h1,h2{margin-top:0}
+</style>
+</head>
+<body>
+
+<h1>🧩 Mini-Projet Microservices</h1>
+
+<!-- PERSONNES -->
+<div class="card">
+<h2>👥 Personnes</h2>
+<button onclick="loadPersons()">Afficher personnes</button>
+<ul id="personsList"></ul>
+</div>
+
+<!-- LOGIN -->
+<div class="card">
+<h2>🔐 Connexion</h2>
+<input id="username" placeholder="Nom d'utilisateur"><br>
+<input id="password" type="password" placeholder="Mot de passe"><br>
+<button onclick="login()">Se connecter</button>
+<p id="loginStatus"></p>
+</div>
+
+<!-- CREATE PERSON -->
+<div class="card">
+<h2>➕ Ajouter une personne</h2>
+<input id="newName" placeholder="Nom"><br>
+<button onclick="createPerson()">Créer</button>
+<p id="createStatus"></p>
+</div>
+
+<!-- DELETE PERSON -->
+<div class="card">
+<h2>🗑️ Supprimer une personne</h2>
+<input id="delId" placeholder="ID"><br>
+<button onclick="deletePerson()">Supprimer</button>
+<p id="deleteStatus"></p>
+</div>
+
+<!-- HEALTH -->
+<div class="card">
+<h2>❤️ Gestion Santé</h2>
+<input id="hid" placeholder="ID personne"><br>
+<input id="weight" placeholder="Poids (kg)"><br>
+<input id="height" placeholder="Taille (cm)"><br>
+<input id="heart_rate" placeholder="Fréquence cardiaque"><br>
+<input id="blood_pressure" placeholder="Tension (ex: 120/80)"><br>
+
+<button onclick="addHealth()">💾 Enregistrer santé</button>
+<button onclick="getHealth()">📖 Voir santé</button>
+
+<pre id="healthStatus"></pre>
+</div>
+
+<script>
+let TOKEN="";
+
+// -------------------
+// PERSONS
+// -------------------
+async function loadPersons(){
+  const res = await fetch("http://localhost:5001/persons");
+  const data = await res.json();
+  personsList.innerHTML="";
+
+  for(const p of data){
+    let li = document.createElement("li");
+    li.innerText = p.id + " - " + p.name;
+
+    // si connecté, récupère les données santé
+    if(TOKEN){
+      try {
+        const healthRes = await fetch(`http://localhost:5002/health/${p.id}`,{
+          headers: {"Authorization":"Bearer "+TOKEN}
+        });
+        if(healthRes.ok){
+          const healthData = await healthRes.json();
+          li.innerText += ` - Santé: poids ${healthData.weight}kg, taille ${healthData.height}cm, fréquence cardiaque ${healthData.heart_rate}, tension ${healthData.blood_pressure}`;
+        }
+      } catch(err){
+        li.innerText += " - Pas de données santé";
+      }
+    }
+
+    personsList.appendChild(li);
+  }
+}
+
+// -------------------
+// AUTH
+// -------------------
+function login(){
+ const user = username.value;
+ const pass = password.value;
+
+ fetch("http://localhost:5003/login",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({username:user,password:pass})
+ })
+ .then(r=>r.json())
+ .then(d=>{
+   if(d.token){
+     TOKEN=d.token;
+     loginStatus.innerText="Connecté ✅";
+     loginStatus.className="success";
+     loadPersons(); // recharge la liste avec les données santé
+   } else {
+     loginStatus.innerText="Erreur login ❌";
+     loginStatus.className="error";
+   }
+ });
+}
+
+// -------------------
+// PERSON CRUD
+// -------------------
+function createPerson(){
+ if(!TOKEN){ createStatus.innerText="🔒 Connectez-vous d'abord"; return; }
+
+ fetch("http://localhost:5001/persons",{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+TOKEN
+  },
+  body:JSON.stringify({name:newName.value})
+ })
+ .then(r=>r.json())
+ .then(d=>createStatus.innerText=JSON.stringify(d,null,2))
+ .finally(()=>loadPersons());
+}
+
+function deletePerson(){
+ if(!TOKEN){ deleteStatus.innerText="🔒 Connectez-vous d'abord"; return; }
+
+ fetch("http://localhost:5001/persons/"+delId.value,{
+  method:"DELETE",
+  headers:{
+    "Authorization":"Bearer "+TOKEN
+  }
+ })
+ .then(r=>r.json())
+ .then(d=>deleteStatus.innerText=JSON.stringify(d,null,2))
+ .finally(()=>loadPersons());
+}
+
+// -------------------
+// HEALTH
+// -------------------
+function addHealth(){
+ if(!TOKEN){ healthStatus.innerText="🔒 Connectez-vous d'abord"; return; }
+
+ fetch("http://localhost:5002/health/"+hid.value,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+TOKEN
+  },
+  body:JSON.stringify({
+    weight: weight.value,
+    height: height.value,
+    heart_rate: heart_rate.value,
+    blood_pressure: blood_pressure.value
+  })
+ })
+ .then(r=>r.json())
+ .then(d=>{
+   healthStatus.innerText = JSON.stringify(d, null, 2);
+   loadPersons(); // recharge la liste pour afficher santé
+ });
+}
+
+function getHealth(){
+ if(!TOKEN){ healthStatus.innerText="🔒 Connectez-vous d'abord"; return; }
+
+ fetch("http://localhost:5002/health/"+hid.value,{
+  headers:{
+    "Authorization":"Bearer "+TOKEN
+  }
+ })
+ .then(r=>r.json())
+ .then(d=>{
+   healthStatus.innerText = JSON.stringify(d, null, 2);
+ });
+}
+</script>
+
+</body>
+</html>
